@@ -1,0 +1,5 @@
+.sconsign.dblite
+*~
+*.bin
+*.o
+*.exe
