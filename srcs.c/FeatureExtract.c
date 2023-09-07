@@ -3,9 +3,10 @@
 void FeatureExtract_Init(FeatureExtract_t *self, Model_t *model) {
     self->model = model;
     SpeechWrap_Init(&self->speech);
-    FeatureQueue_Init(&self->fqueue, 67, 32);
+    FeatureQueue_Init(&self->fqueue, 67, 80);
     memset(self->fft_input, 0, sizeof(self->fft_input));
-    self->plan = fftwf_plan_dft_r2c_1d(FFT_SIZE, self->fft_input, self->fft_out, FFTW_ESTIMATE);
+    self->plan = fftwf_plan_dft_r2c_1d(FFT_SIZE, self->fft_input,
+				       self->fft_output, FFTW_ESTIMATE);
 }
 void FeatureExtract_Destroy(FeatureExtract_t *self) {
     fftwf_destroy_plan(self->plan);
@@ -47,8 +48,7 @@ void FeatureExtract_Insert(FeatureExtract_t *self, const value_t *din, size_t le
 	    prev_value = cur_value;
 	}
 	fftwf_execute(self->plan);
-
-	melspect(self, (value_t *)self->fft_out, temp_feature);
+	melspect(self, (value_t *)self->fft_output, temp_feature);
 	if (flag == S_END &&
 	    window_start > SpeechWrap_Size(&self->speech) - (window_size + window_shift))
 	    FeatureQueue_PushLastFrame(&self->fqueue, temp_feature);

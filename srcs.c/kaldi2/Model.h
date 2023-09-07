@@ -21,6 +21,6 @@ typedef struct {
     Kaldi2Decoder_t decoder;
 } Kaldi2Model_t;
 
-bool_t Kaldi2Model_Init(Kaldi2Model_t *self, FILE *logfp,
+bool_t Kaldi2Model_Init(Kaldi2Model_t *self,
 			const char *model_fpath, const char *vocab_fpath);
 void Kaldi2Model_Destroy(Kaldi2Model_t *self);

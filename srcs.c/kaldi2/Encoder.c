@@ -16,10 +16,10 @@ void Kaldi2Encoder_Destroy(Kaldi2Encoder_t *self) {
 }
 
 void Kaldi2Encoder_Forward(Kaldi2Encoder_t *self, TensorValue_t *din) {
-    Kaldi2EmbedLayer_Forward(&self->embed, din);
     size_t Tmax = din->size[2];
     TensorValue_t pe_code;
     size_t num_sub_encoder = sizeof(self->sub_encoder) / sizeof(self->sub_encoder[0]);
+    Kaldi2EmbedLayer_Forward(&self->embed, din);
     Kaldi2PositionEncoding_Fetch(self->pos_enc, Tmax, &pe_code);
     for (size_t index = 0; index < num_sub_encoder; ++index)
 	Kaldi2SubEncoder_Forward(self->sub_encoder + index, din, &pe_code);

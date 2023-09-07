@@ -24,10 +24,9 @@ void TensorValue_Add(TensorValue_t *self, value_t coe, const TensorValue_t *in) 
     for (at = 0; at < num_values; ++at) self->body[at] += coe * in->body[at];
 }
 
-void TensorValue_SaveDigest(const TensorValue_t *self, FILE *logfp, const char *prefix) {
+void TensorValue_DoLog(const TensorValue_t *self, const char *prefix) {
     char sizestr[32], hexdigest[EVP_MAX_MD_SIZE * 2 + 1];
     EVP_MD_CTX *ctx; unsigned char digest[EVP_MAX_MD_SIZE]; unsigned digest_size;
-    if (logfp == NULL) return;
     snprintf(sizestr, sizeof(sizestr), "[%zu, %zu, %zu, %zu]",
 	     self->size[0], self->size[1], self->size[2], self->size[3]);
     ctx = EVP_MD_CTX_new();
@@ -37,5 +36,5 @@ void TensorValue_SaveDigest(const TensorValue_t *self, FILE *logfp, const char *
     EVP_MD_CTX_free(ctx);
     for (size_t index = 0; index < digest_size; ++index)
 	sprintf(hexdigest + index + index, "%02X", (unsigned)digest[index]);
-    fprintf(logfp, "[\"%s\", %s, \"%s\"]\n", prefix, sizestr, hexdigest);
+    dolog("[\"%s\", %s, \"%s\"]\n", prefix, sizestr, hexdigest);
 }

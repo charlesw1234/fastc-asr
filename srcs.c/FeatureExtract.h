@@ -14,7 +14,7 @@ typedef struct {
     FeatureQueue_t fqueue;
     value_t fft_input[FFT_SIZE];
     // when value_t is float, use fftwf.
-    fftwf_complex fft_out[FFT_SIZE];
+    fftwf_complex fft_output[FFT_SIZE];
     fftwf_plan plan;
 }  FeatureExtract_t;
 

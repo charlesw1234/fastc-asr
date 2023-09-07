@@ -3,7 +3,7 @@
 
 void findmax(value_t *din, size_t len, value_t *max_value, size_t *max_at) {
     assert(len > 0);
-    *max_value = din[0];
+    *max_value = din[0]; *max_at = 0;
     for (size_t index = 1; index < len; ++index)
 	if (din[index] > *max_value) { *max_value = din[index]; *max_at = index; }
 }

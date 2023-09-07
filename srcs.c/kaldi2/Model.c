@@ -53,7 +53,8 @@ static bool_t Kaldi2Model_GreedySearch(Kaldi2Model_t *self,
 	Kaldi2Joiner_DecoderForward(&self->joiner, &decoder_out);
     }
     TensorValue_Destroy(&decoder_out);
-    return Vocab_Vector2String(&self->vocab, result, result_size, hyps, hyps_at - hyps);
+    return Vocab_Vector2String(&self->vocab, result, result_size,
+			       hyps + 2, hyps_at - (hyps + 2));
 }
 static bool_t Kaldi2Model_ForwardV(Model_t *baseself, char *result, size_t result_size,
 				   const value_t *din, size_t len, flag_t flag) {
@@ -61,11 +62,8 @@ static bool_t Kaldi2Model_ForwardV(Model_t *baseself, char *result, size_t resul
     TensorValue_t feature;
     FeatureExtract_Insert(&self->fe, din, len, flag);
     FeatureExtract_Fetch(&self->fe, &feature);
-    TensorValue_SaveDigest(&feature, self->base.logfp, "FeatureFetch");
     Kaldi2Encoder_Forward(&self->encoder, &feature);
-    TensorValue_SaveDigest(&feature, self->base.logfp, "EncoderForward");
     bool_t succ_ornot = Kaldi2Model_GreedySearch(self, result, result_size, &feature);
-    TensorValue_SaveDigest(&feature, self->base.logfp, "GreedySearch");
     TensorValue_Destroy(&feature);
     return succ_ornot;
 }
@@ -84,7 +82,7 @@ static void Kaldi2Model_GlobalCMVNV(Model_t *baseself, value_t *dout) {
 	dout[frame_at] = log(dout[frame_at] < min_resol ? min_resol: dout[frame_at]);
 }
 
-bool_t Kaldi2Model_Init(Kaldi2Model_t *self, FILE *logfp,
+bool_t Kaldi2Model_Init(Kaldi2Model_t *self,
 			const char *model_fpath,
 			const char *vocab_fpath) {
     ModelParser_t parser;
@@ -93,7 +91,7 @@ bool_t Kaldi2Model_Init(Kaldi2Model_t *self, FILE *logfp,
     self->base.reset = Kaldi2Model_ResetV;
     self->base.forward = Kaldi2Model_ForwardV;
     self->base.forward_chunk = Kaldi2Model_ForwardChunkV;
-    Model_Init(&self->base, logfp, (const value_t *)window_hex, window_hex_size, TRUE);
+    Model_Init(&self->base, (const value_t *)window_hex, window_hex_size, TRUE);
     self->base.global_cmvn = Kaldi2Model_GlobalCMVNV;
     if (!Vocab_Init(&self->vocab, vocab_fpath)) goto errquit0;
     if ((self->model_fd = open(model_fpath, O_RDONLY)) < 0) goto errquit1;

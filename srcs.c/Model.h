@@ -10,17 +10,14 @@ struct Model {
 		      const value_t *din, size_t len, flag_t flag);
     bool_t (*forward_chunk)(Model_t *self, char *result, size_t result_size,
 			    const value_t *din, size_t len, flag_t flag);
-    FILE *logfp;
     const value_t *window;
     size_t window_size;
     bool_t fqueue_reinit;
     void (*global_cmvn)(Model_t *self, value_t *dout);
 };
 
-static inline void Model_Init(Model_t *self, FILE *logfp,
-			      const value_t *window, size_t window_size,
-			      bool_t fqueue_reinit) {
-    self->logfp = logfp;
+static inline void Model_Init(Model_t *self, const value_t *window,
+			      size_t window_size, bool_t fqueue_reinit) {
     self->window = window; self->window_size = window_size;
     self->fqueue_reinit = fqueue_reinit; }
 static inline void Model_Destroy(Model_t *self) { self->destroy(self); }

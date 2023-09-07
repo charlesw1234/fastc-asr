@@ -23,4 +23,4 @@ static inline size_t TensorValue_NumValues(const TensorValue_t *self) {
 void TensorValue_Zero(TensorValue_t *self);
 void TensorValue_Add(TensorValue_t *self, value_t coe, const TensorValue_t *in);
 
-void TensorValue_SaveDigest(const TensorValue_t *self, FILE *logfp, const char *prefix);
+void TensorValue_DoLog(const TensorValue_t *self, const char *prefix);
